@@ -172,3 +172,86 @@ model SalaryHistory {
   @@index([employeeId])
   @@index([effectiveDate])
 }
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(150)
+  email    String  @unique @db.VarChar(150)
+  username String? @unique @db.VarChar(100)
+
+  passwordHash String @db.VarChar(255)
+
+  isActive            Boolean   @default(true)
+  lastLoginAt         DateTime?
+  passwordChangedAt   DateTime?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+
+  userRoles UserRole[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  code        String  @unique @db.VarChar(100)
+  description String? @db.Text
+
+  isSystem Boolean @default(false)
+  isActive Boolean @default(true)
+
+  userRoles   UserRole[]
+  permissions RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          Int     @id @default(autoincrement())
+  key         String  @unique @db.VarChar(150)
+  name        String  @db.VarChar(150)
+  description String? @db.Text
+  module      String  @db.VarChar(100)
+
+  roleLinks RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([module])
+}
+
+model UserRole {
+  id     Int @id @default(autoincrement())
+  userId Int
+  roleId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  id           Int @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
