@@ -12,8 +12,12 @@ export const loginSchema = z.object({
     .string()
     .trim()
     .min(3, "Email or username is required.")
-    .max(150),
-  password: z.string().min(1, "Password is required.").max(200),
+    .max(150, "Email or username is too long."),
+
+  password: z
+    .string()
+    .min(1, "Password is required.")
+    .max(200, "Password is too long."),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -29,20 +33,24 @@ export async function loginUser(input: unknown) {
   }
 
   const { identifier, password } = parsed.data;
+
   const normalizedIdentifier = identifier.trim();
+  const normalizedEmail = normalizedIdentifier.toLowerCase();
+
   const now = new Date();
 
   const user = await prisma.user.findFirst({
     where: {
       OR: [
         {
-          email: normalizedIdentifier.toLowerCase(),
+          email: normalizedEmail,
         },
         {
           username: normalizedIdentifier,
         },
       ],
     },
+
     include: {
       userRoles: {
         include: {
@@ -67,7 +75,9 @@ export async function loginUser(input: unknown) {
     };
   }
 
-  if (user.lockedUntil && user.lockedUntil > now) {
+  const lockExpiresAt = user.lockedUntil?.getTime() ?? null;
+
+  if (lockExpiresAt !== null && lockExpiresAt > now.getTime()) {
     return {
       success: false as const,
       message: "Account is temporarily locked. Please try again later.",
@@ -78,7 +88,7 @@ export async function loginUser(input: unknown) {
 
   if (!passwordMatches) {
     const previousLockExpired =
-      user.lockedUntil !== null && user.lockedUntil <= now;
+      lockExpiresAt !== null && lockExpiresAt <= now.getTime();
 
     const failedAttempts = previousLockExpired
       ? 1
@@ -94,6 +104,7 @@ export async function loginUser(input: unknown) {
       where: {
         id: user.id,
       },
+
       data: {
         failedLoginAttempts: failedAttempts,
         lockedUntil,
@@ -112,6 +123,7 @@ export async function loginUser(input: unknown) {
     where: {
       id: user.id,
     },
+
     data: {
       failedLoginAttempts: 0,
       lockedUntil: null,
@@ -137,6 +149,7 @@ export async function loginUser(input: unknown) {
 
   return {
     success: true as const,
+
     user: {
       id: user.id,
       name: user.name,
