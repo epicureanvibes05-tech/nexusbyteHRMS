@@ -2,6 +2,8 @@
 
 Date: 2026-09-18. Controlling source: [FINAL-MASTER-REQUIREMENTS.md](FINAL-MASTER-REQUIREMENTS.md), read completely with `AGENTS.md`. This register preserves source headings and every nonblank source clause, including contextual text and acceptance lists. Source list markers are preserved. Source hash and observed evidence are in [CURRENT-BASELINE.md](../architecture/CURRENT-BASELINE.md).
 
+Phase 1A update: the original Phase 0 register below is retained as a historical implementation assessment. The user's later authorization permits foundation technical design and migration/test planning only; see the [Phase 1A design addendum](#phase-1a-design-addendum). No product status or original source clause is changed by completing design documents.
+
 ## Status vocabulary and record interpretation
 
 Allowed statuses only: `COMPLETE_AND_VERIFIED`, `COMPLETE_BUT_NEEDS_IMPROVEMENT`, `PARTIALLY_COMPLETE`, `NOT_STARTED`, `BLOCKED_BY_DECISION`, `BLOCKED_BY_EXTERNAL_DEPENDENCY`, `DEFERRED_WITH_REASON`, `CONFLICT_FOUND`. No status must be used merely to fill the vocabulary. `NOT_STARTED` describes absent implementation, not a decision to abandon scope. `BLOCKED_BY_DECISION` blocks only dependent production behavior.
@@ -1361,3 +1363,15 @@ Source: Master §33; profile P33.
 | MR-33-009 | 8. Files/models/routes/tests expected to change. | COMPLETE_AND_VERIFIED |
 | MR-33-010 | 9. Verification and rollback plan. | COMPLETE_AND_VERIFIED |
 | MR-33-011 | Then implement one approved, coherent phase at a time until all non-blocked requirements are complete. Do not ask repeated questions already answered by this document or repository evidence. Ask only decisions whose answer materially changes policy, legal compliance, architecture or data behavior. | NOT_STARTED |
+
+## Phase 1A design addendum
+
+Date: 2026-09-18. This addendum records the user's documentation-only Phase 1A request under Master §30 Phase 1 and §§1.2, 31–33. It does not close C-01–C-11, approve OD-01–OD-21, or claim tests passed. Existing source wording, all 600 source-clause IDs and their product implementation statuses remain unchanged.
+
+| Design record / purpose | Master and existing requirement references | Design evidence | Acceptance / future test evidence | Migration and rollback | Documentation status |
+| --- | --- | --- | --- | --- | --- |
+| P1A-01 Foundation technical design; preserve valid work while defining owner/auth/access/identity/history/audit boundaries | §§3–5, 13, 23–24, 29–30; MR-4-002, MR-3/3.1/3.2 groups, MR-5.1/5.4 groups, MR-24-002–007/010–012/015/018, MR-23-001–004 | [PHASE-1-FOUNDATION-DESIGN.md](../architecture/PHASE-1-FOUNDATION-DESIGN.md), D-01–D-10, model/change cards M-01–M-33 | Each proposed change has purpose, relationships, constraints/indexes, owner/privacy/history, migration impact/risk and source references; T1-01–31 planned, none executed | Additive staged design; no schema/data change; compatible fallback required after auth/history cutover | COMPLETE_AND_VERIFIED |
+| P1A-02 Forward-only migration/backfill plan; preserve administrator, legacy codes, grants and salary history | §§1.1, 1.4, 5.1, 5.4, 23, 25, 31; MR-1.1-006–009, MR-25 group, MR-31-006 | [PHASE-1-MIGRATION-PLAN.md](../architecture/PHASE-1-MIGRATION-PLAN.md), MP-01–MP-08 | Separate expand/backfill/tighten gates, protected preflight/backup, resumability and repair; T1-32–35 planned, no migration or restore executed | A0–A10 are future batches, no migration files created; documented rollback floors and forward repair | COMPLETE_AND_VERIFIED |
+| P1A-03 Automated-test foundation plan; replace unsupported completion claims with behavioral acceptance | §§28, 31–32; MR-28-002–003/015–019/026/029/031; MR-31 group | [PHASE-1-TEST-PLAN.md](../testing/PHASE-1-TEST-PLAN.md), TP-01–TP-05, T1-01–35 | Real-database isolation, mapping, auth lifecycle/hash upgrade, ID concurrency, overlap, archive/audit/revocation and preservation tests specified; all test cases NOT_STARTED | Only documentation now; later isolated fixtures and reviewed test harness, no production resets | COMPLETE_AND_VERIFIED |
+
+For these design records, source precedence is the Master plus the latest explicit Phase 1A scope restriction. Proposed owners are engineering/security with HR/operations review; individual approvals remain unassigned. Dependencies are actual protected DB inventory, owner/grant mapping, approved security policy and relevant §29 decisions before dependent activation. Privacy impact is documented prevention of disclosure/history loss; no personal data was read or copied. Document verification is source/link/coverage/write-scope review only. Rollback of this delivery touches only the three new documents and this addendum. Next milestone remains a separately authorized implementation slice, not an automatic continuation from design.
