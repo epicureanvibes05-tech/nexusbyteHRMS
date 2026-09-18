@@ -197,12 +197,13 @@ async function main() {
       },
     });
 
-    const permissionKeys =
-      "allPermissions" in roleDefinition && roleDefinition.allPermissions
-        ? allPermissions.map((permission) => permission.key)
-        : "permissions" in roleDefinition
-          ? (roleDefinition.permissions ?? [])
-          : [];
+    let permissionKeys: readonly string[] = [];
+
+    if ("allPermissions" in roleDefinition && roleDefinition.allPermissions) {
+      permissionKeys = allPermissions.map((permission) => permission.key);
+    } else if ("permissions" in roleDefinition) {
+      permissionKeys = roleDefinition.permissions ?? [];
+    }
 
     for (const permissionKey of permissionKeys) {
       const permission = allPermissions.find(
