@@ -255,3 +255,59 @@ model RolePermission {
   @@index([roleId])
   @@index([permissionId])
 }
+
+model Tenant {
+  id       Int     @id @default(autoincrement())
+  slug     String  @unique @db.VarChar(100)
+  name     String  @db.VarChar(150)
+  isActive Boolean @default(true)
+
+  companies Company[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Company {
+  id                Int     @id @default(autoincrement())
+  tenantId          Int
+  code              String  @db.VarChar(20)
+  name              String  @db.VarChar(150)
+  isActive          Boolean @default(true)
+  currentSettingsId Int?
+
+  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  settings        CompanySettings[] @relation("CompanySettingsHistory")
+  currentSettings CompanySettings?  @relation("CurrentCompanySettings", fields: [tenantId, id, currentSettingsId], references: [tenantId, companyId, id], onDelete: Restrict, onUpdate: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, code])
+  @@unique([tenantId, id])
+  @@unique([tenantId, id, currentSettingsId])
+  @@index([tenantId, isActive])
+}
+
+// Append-only versions; publication, overlap checks and audit belong to a later service slice.
+model CompanySettings {
+  id        Int       @id @default(autoincrement())
+  tenantId  Int
+  companyId Int
+  version   Int
+  timezone  String    @db.VarChar(100)
+  currency  String    @db.Char(3)
+  validFrom DateTime  @db.Date
+  validTo   DateTime? @db.Date
+
+  company           Company  @relation("CompanySettingsHistory", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Restrict, onUpdate: Restrict)
+  currentForCompany Company? @relation("CurrentCompanySettings")
+
+  createdAt DateTime @default(now())
+
+  @@unique([tenantId, companyId, id])
+  @@unique([tenantId, companyId, version])
+  @@index([tenantId, companyId, validFrom])
+}

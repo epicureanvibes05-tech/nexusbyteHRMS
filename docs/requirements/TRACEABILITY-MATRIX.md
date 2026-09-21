@@ -4,6 +4,10 @@ Date: 2026-09-18. Controlling source: [FINAL-MASTER-REQUIREMENTS.md](FINAL-MASTE
 
 Phase 1A update: the original Phase 0 register below is retained as a historical implementation assessment. The user's later authorization permits foundation technical design and migration/test planning only; see the [Phase 1A design addendum](#phase-1a-design-addendum). No product status or original source clause is changed by completing design documents.
 
+Phase 1B.1 update (2026-09-21): the latest authorization adds only Tenant, Company and CompanySettings schema definitions and one unapplied migration. See the [Phase 1B.1 implementation addendum](#phase-1b1-implementation-addendum) for current evidence; historical source clauses and assessments below are preserved.
+
+Rehearsal evidence update (2026-09-22): the user reports successful application to a disposable clone only; real development remains unmigrated. See [Phase 1B.1 rehearsal evidence](#phase-1b1-rehearsal-evidence). Earlier dated assessments below remain historical.
+
 ## Status vocabulary and record interpretation
 
 Allowed statuses only: `COMPLETE_AND_VERIFIED`, `COMPLETE_BUT_NEEDS_IMPROVEMENT`, `PARTIALLY_COMPLETE`, `NOT_STARTED`, `BLOCKED_BY_DECISION`, `BLOCKED_BY_EXTERNAL_DEPENDENCY`, `DEFERRED_WITH_REASON`, `CONFLICT_FOUND`. No status must be used merely to fill the vocabulary. `NOT_STARTED` describes absent implementation, not a decision to abandon scope. `BLOCKED_BY_DECISION` blocks only dependent production behavior.
@@ -1375,3 +1379,30 @@ Date: 2026-09-18. This addendum records the user's documentation-only Phase 1A r
 | P1A-03 Automated-test foundation plan; replace unsupported completion claims with behavioral acceptance | §§28, 31–32; MR-28-002–003/015–019/026/029/031; MR-31 group | [PHASE-1-TEST-PLAN.md](../testing/PHASE-1-TEST-PLAN.md), TP-01–TP-05, T1-01–35 | Real-database isolation, mapping, auth lifecycle/hash upgrade, ID concurrency, overlap, archive/audit/revocation and preservation tests specified; all test cases NOT_STARTED | Only documentation now; later isolated fixtures and reviewed test harness, no production resets | COMPLETE_AND_VERIFIED |
 
 For these design records, source precedence is the Master plus the latest explicit Phase 1A scope restriction. Proposed owners are engineering/security with HR/operations review; individual approvals remain unassigned. Dependencies are actual protected DB inventory, owner/grant mapping, approved security policy and relevant §29 decisions before dependent activation. Privacy impact is documented prevention of disclosure/history loss; no personal data was read or copied. Document verification is source/link/coverage/write-scope review only. Rollback of this delivery touches only the three new documents and this addendum. Next milestone remains a separately authorized implementation slice, not an automatic continuation from design.
+
+## Phase 1B.1 implementation addendum
+
+Date: 2026-09-21. Scope: design D-02, M-01–M-03 and the three-table subset of migration-plan A1. Controlling source remains the Master plus the user's explicit create-only, no-backfill restriction. All original requirement IDs and source wording above remain intact. Evidence and exact validation results: [Phase 1B.1 implementation record](../architecture/PHASE-1B-1-TENANT-COMPANY-IMPLEMENTATION.md).
+
+| Existing requirement / Master reference | Direct evidence in this slice | Remaining acceptance and dependencies | Current product status |
+| --- | --- | --- | --- |
+| MR-0-002/005/006/008/009/010; preamble | Tenant slug/name, Company name/code and CompanySettings timezone/currency support `nexusbyte-solutions`, `Nexusbyte Solutions`, `NBSO`, `Asia/Karachi`, `PKR`; no rows inserted | Reviewed migration application, identity/settings backfill and application consumption; no assumed IDs or effective date | PARTIALLY_COMPLETE |
+| MR-4-001/002/017/018; §4 | Three new models; owner-scoped company code and settings-version uniqueness; composite ownership/current-pointer FKs; RESTRICT on every new FK | Unapplied SQL; real-DB uniqueness/FK/deletion tests, authorization, audited maintenance and preservation of referenced history across all masters still required | PARTIALLY_COMPLETE |
+| MR-2.1-005/010/011; §2.1 | Settings versions, date-only validity and explicit same-company current pointer; timezone stored as configuration | No policy engine, append-only enforcement, overlap/publication service, UTC connection verification or historical calculation tests; §29 decisions remain open | PARTIALLY_COMPLETE |
+| MR-24-010/018; §24 | Composite owner tuples prepare a foundation within the three new tables | Existing HR/User tables and server reads remain unscoped; no cross-company tests executed. C-03 is not closed and additional-company access is not authorized | CONFLICT_FOUND |
+| MR-30-P1-001; §30 Phase 1 | One create-only migration adds M-01–M-03; existing 11 models and three enums unchanged | Rest of A1/F1, all later foundation slices and applicable test-plan gates remain outstanding | PARTIALLY_COMPLETE |
+
+Migration evidence: `prisma/migrations/20260921180023_phase1_tenant_company_foundation/migration.sql` contains three CREATE TABLE statements and three ADD FOREIGN KEY statements affecting only new tables; no DML, DROP or destructive ALTER. Post-generation migration status reports this migration alone pending. Static/schema/build results do not constitute automated-suite or database migration testing. No suite exists. Owner: engineering, with security/operations review before application and reviewed identity mapping before backfill. Recovery: no database rollback is needed now; after later application preserve migration history and use reviewed forward repair. This addendum changes only directly affected traceability evidence; it approves no open policy decision.
+
+## Phase 1B.1 rehearsal evidence
+
+Recorded 2026-09-22. [Rehearsal record](../testing/PHASE-1B-1-MIGRATION-REHEARSAL.md) documents user-provided PASS evidence on disposable clone `nexusbyte_hrms_phase1_test`: backup restored, foundation migration deployed, three applied migrations, three empty foundation tables and all three new FK relationships verified as DELETE/UPDATE RESTRICT. Reported user/role/permission/employee/salaryhistory counts match real development (1/4/38/0/0). These operations were not rerun by the documentation agent.
+
+| Requirement references | Additional evidence and remaining scope | Current requirement status |
+| --- | --- | --- |
+| MR-4-002/017/018; Master section 4 | Tables and restrictive FK metadata verified in clone; behavioral uniqueness/owner-mismatch/delete tests, scoped services and audited maintenance remain outstanding | PARTIALLY_COMPLETE |
+| MR-31-006; Master section 31; T1-32 | Current-snapshot migration compatibility rehearsal passed; populated HR fixtures, value/relationship comparisons, backfill resumability and failure/recovery scenarios remain unverified | PARTIALLY_COMPLETE |
+| MR-25-008/014; Master section 25; T1-35 | Specified SQL backup restored successfully to clone; full database/files/config/key recovery and recovery-objective evidence remain outstanding | PARTIALLY_COMPLETE |
+| MR-30-P1-001; Master section 30 Phase 1 | Additional limited rehearsal evidence only; full foundation acceptance and development deployment remain incomplete | PARTIALLY_COMPLETE |
+
+Counts alone do not prove row-value preservation; Employee and SalaryHistory were empty. FK metadata checks are not enforcement tests. No automated-suite pass, production compatibility, full T1-32/T1-35 pass or resolution of isolation conflict C-03 is claimed. Original requirement IDs/source wording are unchanged. Next gate is reviewed deployment to `nexusbyte_hrms`, followed by post-deploy verification; the migration remains pending there after the reported temporary override removal. Backfill remains separate. Preserve the migration SQL already applied to the clone; any repair requires reviewed forward changes. This task records evidence only and authorizes no deployment or database mutation.
