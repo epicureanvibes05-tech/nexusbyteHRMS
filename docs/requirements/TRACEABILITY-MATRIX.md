@@ -8,6 +8,8 @@ Phase 1B.1 update (2026-09-21): the latest authorization adds only Tenant, Compa
 
 Rehearsal evidence update (2026-09-22): the user reports successful application to a disposable clone only; real development remains unmigrated. See [Phase 1B.1 rehearsal evidence](#phase-1b1-rehearsal-evidence). Earlier dated assessments below remain historical.
 
+Later development deployment update (2026-09-22): the user reports successful application to `nexusbyte_hrms`, three migrations/up-to-date status, table presence and lint/type-check/build passes. See [development deployment evidence](#phase-1b1-development-deployment-evidence). This supersedes earlier pending-development statements as current status; historical source clauses and checkpoint evidence remain preserved. Backfill is still outstanding and production deployment is not claimed.
+
 ## Status vocabulary and record interpretation
 
 Allowed statuses only: `COMPLETE_AND_VERIFIED`, `COMPLETE_BUT_NEEDS_IMPROVEMENT`, `PARTIALLY_COMPLETE`, `NOT_STARTED`, `BLOCKED_BY_DECISION`, `BLOCKED_BY_EXTERNAL_DEPENDENCY`, `DEFERRED_WITH_REASON`, `CONFLICT_FOUND`. No status must be used merely to fill the vocabulary. `NOT_STARTED` describes absent implementation, not a decision to abandon scope. `BLOCKED_BY_DECISION` blocks only dependent production behavior.
@@ -1406,3 +1408,16 @@ Recorded 2026-09-22. [Rehearsal record](../testing/PHASE-1B-1-MIGRATION-REHEARSA
 | MR-30-P1-001; Master section 30 Phase 1 | Additional limited rehearsal evidence only; full foundation acceptance and development deployment remain incomplete | PARTIALLY_COMPLETE |
 
 Counts alone do not prove row-value preservation; Employee and SalaryHistory were empty. FK metadata checks are not enforcement tests. No automated-suite pass, production compatibility, full T1-32/T1-35 pass or resolution of isolation conflict C-03 is claimed. Original requirement IDs/source wording are unchanged. Next gate is reviewed deployment to `nexusbyte_hrms`, followed by post-deploy verification; the migration remains pending there after the reported temporary override removal. Backfill remains separate. Preserve the migration SQL already applied to the clone; any repair requires reviewed forward changes. This task records evidence only and authorizes no deployment or database mutation.
+
+## Phase 1B.1 development deployment evidence
+
+Recorded 2026-09-22 from the user's completed-deployment report. [Development deployment record](../testing/PHASE-1B-1-DEV-DEPLOYMENT.md) records successful `npx prisma migrate deploy` to `nexusbyte_hrms`, three migrations/up-to-date status, Tenant/Company/CompanySettings table presence, fresh external SQL backup, lint/type-check/build passes and a clean working tree after deployment. The documentation agent also observed a clean tree before these documentation edits. No destructive migration/reset/db push was used. This is development deployment, not production; no foundation business rows have been backfilled.
+
+| Requirement references | Direct deployment evidence and remaining acceptance | Current requirement status |
+| --- | --- | --- |
+| MR-4-002/017/018; Master section 4 | Three foundation tables deployed to real development; latest manual count/FK evidence is tracked in the deployment record. Scoped maintenance, behavioral uniqueness/ownership/deletion tests and audit remain outstanding | PARTIALLY_COMPLETE |
+| MR-31-006; Master section 31 | Earlier clone rehearsal plus successful development deployment; full representative-data preservation, resumability and failure/recovery tests remain outstanding | PARTIALLY_COMPLETE |
+| MR-25-008/013/014; Master section 25 | Fresh pre-deploy SQL backup completed; earlier different backup restored in clone. No fresh-backup restore or production recovery proof claimed | PARTIALLY_COMPLETE |
+| MR-0-002/005/006/008/009; preamble; MR-30-P1-001; Master section 30 Phase 1 | Schema deployed, but business identity/settings rows absent. Phase 1B.2 will handle controlled idempotent NexusByte tenant/company/settings backfill | PARTIALLY_COMPLETE |
+
+Earlier pending-development statements in dated addenda describe prior checkpoints; this addendum records current deployment state. Latest post-deployment manual counts/FK details require explicit evidence rather than reuse of clone-only verification; see the linked record. No automated-suite pass, production readiness or closure of isolation conflict C-03 is claimed. Preserve applied migration SQL/history; any repair requires reviewed forward changes. No deployment, database mutation or backfill was performed during this documentation task. Master source wording and original IDs remain unchanged.
