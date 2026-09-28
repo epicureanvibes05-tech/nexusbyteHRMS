@@ -1,5 +1,6 @@
 import { LogoutButton } from "@/components/logout-button";
 import { redirect } from "next/navigation";
+import { requirePermission } from "@/lib/authorization";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/session";
 
@@ -26,6 +27,8 @@ export default async function DashboardPage() {
   if (!user?.isActive) {
     redirect("/login");
   }
+
+  await requirePermission(userId, "employees.view");
 
   const [
     totalEmployees,
